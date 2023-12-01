@@ -1,11 +1,14 @@
+from typing import Annotated
 from imp import reload
-from fastapi import FastAPI
-from pydantic import EmailStr
+from fastapi import FastAPI, Path
+from pydantic import BaseModel, EmailStr
 import uvicorn
 
 app = FastAPI()
 
 
+class CreateUser(BaseModel):
+    email: EmailStr
 
 @app.get("/")
 def hello_index():
@@ -13,6 +16,20 @@ def hello_index():
         "massage": "hello index"
 
     }
+
+@app.get("/hello/")
+def hello(name:str = "World"):
+    name = name.strip().title()
+    return {"massage": f"Hello {name}"}
+
+
+@app.post("/users")
+def create_user(user: CreateUser):
+    return {
+        "message": "success",
+        "email": user.email,
+    }
+
 
 @app.get("/items")
 def list_items():
@@ -22,15 +39,6 @@ def list_items():
         'item3',
     ]
 
-@app.get("/hello/")
-def hello(name:str = "World"):
-    name = name.strip().title()
-    return {"massage": f"Hello {name}"}
-
-@app.post("/users")
-def create_user(email: EmailStr):
-    pass
-
 
 @app.get("/items/latest/")
 def get_latest_item():
@@ -38,7 +46,7 @@ def get_latest_item():
 
 
 @app.get("/items/{items_id}/")
-def get_item_by_id(items_id:int):
+def get_item_by_id(items_id: Annotated[int, Path(ge=1, lt=1000000)]):
     return {
        "item": {
             "id": items_id,
