@@ -1,5 +1,6 @@
 from imp import reload
 from fastapi import FastAPI
+from pydantic import EmailStr
 import uvicorn
 
 app = FastAPI()
@@ -21,7 +22,14 @@ def list_items():
         'item3',
     ]
 
-@app.get
+@app.get("/hello/")
+def hello(name:str = "World"):
+    name = name.strip().title()
+    return {"massage": f"Hello {name}"}
+
+@app.post("/users")
+def create_user(email: EmailStr):
+    pass
 
 
 @app.get("/items/latest/")
