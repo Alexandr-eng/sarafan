@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel, EmailStr
 
 
-import uvicorn      
+     
 from core.models import Base, db_helper
 
 from items_viws import router as item_router
